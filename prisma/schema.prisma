@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(dbgenerated("uuid_generate_v4()"))
+  name  String @db.Text
+  email String @unique @db.Text
+
+  @@map("users")
+}
+
+model Merchant {
+  id       String   @id @default(dbgenerated("uuid_generate_v4()"))
+  name     String   @db.Text
+  branches Branch[]
+
+  @@map("merchants")
+}
+
+model Branch {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()"))
+  name       String   @db.Text
+  merchantId String   @db.Text
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
+
+  @@map("branches")
+}
